@@ -1,7 +1,8 @@
 import './css/styles.css';
 import Notiflix from 'notiflix';
 import axios from 'axios';
-import SimpleLightbox from 'simplelightbox';
+import SimpleLightbox from "simplelightbox";
+import "simplelightbox/dist/simple-lightbox.min.css";
 
 const API_KEY = '35888482-91687ab4dbf94420f0a7f1f80';
 const form = document.querySelector('#search-form');
@@ -26,13 +27,14 @@ async function fetchImages() {
 
 function createImageCard(image) {
   const { webformatURL, tags, likes, views, comments, downloads } = image;
-  const card = document.createElement('div');
-  card.className = 'card';
+  const link = document.createElement('a');
+  link.href = webformatURL;
+  link.title = tags;
   const img = document.createElement('img');
   img.src = webformatURL;
   img.alt = tags;
   img.loading = 'lazy';
-  card.appendChild(img);
+  link.appendChild(img);
   const body = document.createElement('div');
   body.className = 'card-body';
   const title = document.createElement('h3');
@@ -55,20 +57,29 @@ function createImageCard(image) {
     list.appendChild(item);
   }
   body.appendChild(list);
-  card.appendChild(body);
+  link.appendChild(body);
 
-  const lightbox = new SimpleLightbox(card, { 
-    sourceAttr: 'src',
-    captionSelector: 'h3',
-  });
-
-  return card.outerHTML;
+  return link.outerHTML;
 }
 
 function renderImages(images) {
   const hits = images.hits;
   const cards = hits.map(createImageCard).join('');
   gallery.insertAdjacentHTML('beforeend', cards);
+  const lightbox = new SimpleLightbox('.gallery a', {
+    captionsData: 'title',
+    captionPosition: 'outside',
+    captionsDelay: 250,
+  });
+  lightbox.refresh();
+  const { height: cardHeight } = document
+    .querySelector(".gallery")
+    .firstElementChild.getBoundingClientRect();
+  const scrollHeight = cardHeight * hits.length;
+  window.scrollTo({
+    top: gallery.scrollHeight - scrollHeight,
+    behavior: 'smooth',
+  });
 }
 
 function clearGallery() {
@@ -85,11 +96,12 @@ function hideLoadMoreBtn() {
 }
 
 function showNoResultsMessage() {
-  Notiflix.Notify.failure('Sorry, no results found');
+  Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
 }
 
 function updateTotalHits(total) {
   totalHits = total;
+  Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
 }
     
 function handleSearch(event) {

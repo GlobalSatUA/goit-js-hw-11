@@ -24,22 +24,18 @@ async function fetchImages() {
     return [];
   }
 }
-
 function createImageCard(image) {
-  const { webformatURL, tags, likes, views, comments, downloads } = image;
+  const { webformatURL, largeImageURL, tags, likes, views, comments, downloads } = image;
   const link = document.createElement('a');
-  link.href = webformatURL;
+  link.href = largeImageURL;
   link.title = tags;
   const img = document.createElement('img');
-  img.src = webformatURL;
+  img.src = largeImageURL;
   img.alt = tags;
   img.loading = 'lazy';
   link.appendChild(img);
   const body = document.createElement('div');
   body.className = 'card-body';
-  const title = document.createElement('h3');
-  title.textContent = tags;
-  body.appendChild(title);
   const list = document.createElement('ul');
   const items = [
     { label: 'Likes', value: likes },
@@ -57,10 +53,18 @@ function createImageCard(image) {
     list.appendChild(item);
   }
   body.appendChild(list);
-  link.appendChild(body);
+  const card = document.createElement('div');
+  card.classList.add('card');
+  card.appendChild(link);
+  card.appendChild(body);
+  const gallery = document.querySelector('.gallery');
+  gallery.appendChild(card);
 
-  return link.outerHTML;
+  return card.outerHTML;
 }
+
+
+
 
 function renderImages(images) {
   const hits = images.hits;
@@ -142,10 +146,6 @@ function handleSearch(event) {
   form.addEventListener('submit', handleSearch);
   loadMoreBtn.addEventListener('click', handleLoadMore);
   
-  new SimpleLightbox('.gallery img', {
-    captionsData: 'alt',
-    captionPosition: 'outside',
-    captionsDelay: 250,
-  });
+
   
  

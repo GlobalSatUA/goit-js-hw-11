@@ -20,8 +20,8 @@
 .gallery {
     padding-top: 20px;
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* чотири стовпців */
-    grid-gap: 20px; /* відступ між елементами */
+    grid-template-columns: repeat(4, 1fr); 
+    grid-gap: 20px; 
   }
 
   .card {

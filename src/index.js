@@ -136,12 +136,13 @@ function handleSearch(event) {
       .then((data) => {
         const { hits } = data;
         renderImages(data);
-        if (pageNumber * hits.length >= totalHits) {
+        if (hits.length < 20) { 
           hideLoadMoreBtn();
         }
       })
       .catch((error) => console.error(error));
   }
+  
   
   form.addEventListener('submit', handleSearch);
   loadMoreBtn.addEventListener('click', handleLoadMore);
